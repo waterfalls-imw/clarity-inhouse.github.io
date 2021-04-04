@@ -175,13 +175,13 @@ LOGGING = {
         },
     },
     'loggers': {
-        # 'SteamClient': {
-        #     'handlers': ['console'],
-        #     'level': 'DEBUG',
-        # },
-        # 'Dota2Client': {
-        #     'handlers': ['console'],
-        #     'level': 'DEBUG',
-        # },
+         #'SteamClient': {
+         #    'handlers': ['console'],
+         #    'level': 'DEBUG',
+         #},
+         #'Dota2Client': {
+         #    'handlers': ['console'],
+         #    'level': 'DEBUG',
+         #},
     },
 }

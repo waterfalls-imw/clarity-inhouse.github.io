@@ -64,13 +64,16 @@ class Command(BaseCommand):
             queues_channel = DiscordChannels.get_solo().queues
             self.queues_channel = self.bot.get_channel(queues_channel)
 
-            await self.setup_poll_messages()
+            print('first')
+            #await self.setup_poll_messages()
+            print('second')
             await self.setup_queue_messages()
+            print('third')
 
             queue_afk_check.start()
             update_queues_shown.start()
             clear_queues_channel.start()
-            sky_stock_joke.start()
+            #sky_stock_joke.start()
 
         @self.bot.event
         async def on_message(msg):
@@ -86,23 +89,22 @@ class Command(BaseCommand):
             if ('stupid bot' in content) or ('bot is stupid' in content):
                 response = random.choice([
                     'Smarter than you.',
-                    'You are stupid.'
+                    'You will find that you are, in fact, the silly one.'
                 ])
                 await msg.channel.send(response)
             elif ('fu bot' in content) or ('fuck you bot' in content) or ('fuck u bot' in content):
                 response = random.choice([
-                    'Bite my shiny metal ass!',
-                    'Fuck you too.'
+                    'Why you have to be mad? Is only game!',
+                    'Heck you too >:('
                 ])
                 await msg.channel.send(response)
             elif self.bot.user.mentioned_in(msg):
-                poly = Player.objects.get(name__iexact='Poly')
-                poly = self.bot.get_user(int(poly.discord_id))
+                #poly = Player.objects.get(name__iexact='Poly')
+                #poly = self.bot.get_user(int(poly.discord_id))
 
                 response = random.choice([
-                    'Imagine thinking inhouse-bot and inhouse-ping are same thing :thinking:',
-                    'Ping your mum.',
-                    poly.mention,
+                    'Pong!',
+                    #poly.mention,
                 ])
                 await msg.channel.send(response)
 
@@ -308,7 +310,7 @@ class Command(BaseCommand):
         try:
             player = Player.objects.get(discord_id=msg.author.id)
         except Player.DoesNotExist:
-            await msg.channel.send(f'{msg.author.name}, who the fuck are you?')
+            await msg.channel.send(f'{msg.author.name}, hmm who are you?')
             return
 
         if player.banned:
@@ -342,7 +344,7 @@ class Command(BaseCommand):
             await msg.channel.send(
                 'Format: `!register username mmr dota_id`. Example: \n' 
                 '```\n'
-                '!register Uvs 3000 444510529\n'
+                '!register Crispy Bacon 1234 80995563\n'
                 '```'
             )
             return
@@ -353,7 +355,7 @@ class Command(BaseCommand):
 
         # check if we can register this player
         if Player.objects.filter(Q(discord_id=msg.author.id) | Q(dota_id=dota_id)).exists():
-            await msg.channel.send('Already registered, bro.')
+            await msg.channel.send('Already registered!')
             return
 
         if Player.objects.filter(name__iexact=name).exists():
@@ -374,8 +376,7 @@ class Command(BaseCommand):
         admins_to_ping = Player.objects.filter(new_reg_pings=True)
         await msg.channel.send(
             f"""Welcome to the ladder, `{name}`! 
-            \nYou need to get vouched before you can play. Wait for inhouse staff to review your signup. 
-            \nYou can ping their lazy asses if it takes too long ;)
+            \nYou need to get vouched before you can play. Wait for inhouse staff to review your signup.
             \n{' '.join(self.player_mention(p) for p in admins_to_ping)}"""
         )
 
@@ -392,14 +393,14 @@ class Command(BaseCommand):
 
         player = Command.get_player_by_name(name)
         if not player:
-            await msg.channel.send(f'`{name}`: I don\'t know him')
+            await msg.channel.send(f'`{name}`: I don\'t know them')
             return
 
         player.vouched = True
         player.save()
 
         await msg.channel.send(
-            f'{self.player_mention(player)} has been vouched. He can play now!'
+            f'{self.player_mention(player)} has been vouched. They can play now!'
         )
 
     async def whois_command(self, msg, **kwargs):
@@ -417,7 +418,7 @@ class Command(BaseCommand):
 
         player = player or Command.get_player_by_name(name)
         if not player:
-            await msg.channel.send(f'`{name}`: I don\'t know him')
+            await msg.channel.send(f'`{name}`: I don\'t know them')
             return
 
         dotabuff = f'https://www.dotabuff.com/players/{player.dota_id}'
@@ -439,7 +440,7 @@ class Command(BaseCommand):
             f'MMR: {player.dota_mmr}\n'
             f'Dotabuff: {dotabuff}\n'
             f'Ladder: {player_url}\n\n'
-            f'Ladder MMR: {player.ladder_mmr}\n'
+            #f'Ladder MMR: {player.ladder_mmr}\n'
             f'Score: {player.score}\n'
             f'Rank: {player.rank_score}\n'
             f'Games: {len(player.matches)} ({wins}-{losses})\n\n'
@@ -461,7 +462,7 @@ class Command(BaseCommand):
 
         player = Command.get_player_by_name(name)
         if not player:
-            await msg.channel.send(f'`{name}`: I don\'t know him')
+            await msg.channel.send(f'`{name}`: I don\'t know them')
             return
 
         player.banned = Player.BAN_PLAYING
@@ -485,7 +486,7 @@ class Command(BaseCommand):
 
         player = Command.get_player_by_name(name)
         if not player:
-            await msg.channel.send(f'`{name}`: I don\'t know him')
+            await msg.channel.send(f'`{name}`: I don\'t know them')
             return
 
         player.banned = None
@@ -521,7 +522,7 @@ class Command(BaseCommand):
 
         if any(x.queue__players__count == 10 for x in qs):
             await msg.channel.send(
-                f'`{player}`, you are under arrest dodging scum. Play the game.\n'
+                f'`{player}`, where you going? Play the game! :)\n'
             )
             return
 
@@ -555,7 +556,7 @@ class Command(BaseCommand):
 
         player = Command.get_player_by_name(name)
         if not player:
-            await msg.channel.send(f'`{name}`: I don\'t know him')
+            await msg.channel.send(f'`{name}`: I don\'t know them')
             return
 
         # check that player is not in a queue already
@@ -600,7 +601,7 @@ class Command(BaseCommand):
 
         player = Command.get_player_by_name(name)
         if not player:
-            await msg.channel.send(f'`{name}`: I don\'t know him')
+            await msg.channel.send(f'`{name}`: I don\'t know them')
             return
 
         deleted, _ = QueuePlayer.objects \
@@ -633,7 +634,7 @@ class Command(BaseCommand):
 
         victim = Command.get_player_by_name(name)
         if not victim:
-            await msg.channel.send(f'`{name}`: I don\'t know him')
+            await msg.channel.send(f'`{name}`: I don\'t know them')
             return
 
         if victim not in queue.players.all():
@@ -746,7 +747,7 @@ class Command(BaseCommand):
         )
         await msg.channel.send(
             f'```{top_str} ``` \n'
-            f'Full leaderboard is here: {url}'
+            #f'Full leaderboard is here: {url}'
         )
 
     async def bottom_command(self, msg, **kwargs):
@@ -769,7 +770,7 @@ class Command(BaseCommand):
 
         player = player or Command.get_player_by_name(name)
         if not player:
-            await msg.channel.send(f'`{name}`: I don\'t know him')
+            await msg.channel.send(f'`{name}`: I don\'t know them')
             return
 
         mps = player.matchplayer_set.filter(match__season=LadderSettings.get_solo().current_season)
@@ -922,7 +923,7 @@ class Command(BaseCommand):
         if name:
             player = Command.get_player_by_name(name)
             if not player:
-                await msg.channel.send(f'`{name}`: I don\'t know him')
+                await msg.channel.send(f'`{name}`: I don\'t know them')
                 return
 
         host = os.environ.get('BASE_URL', 'localhost:8000')
@@ -945,8 +946,8 @@ class Command(BaseCommand):
             f'```\n' +
             f'Last {num} matches of {player}:\n\n' +
             f'\n'.join(match_str(x) for x in mps) +
-            f'\n```\n' +
-            f'More on {player_url}'
+            f'\n```\n'
+            #f'More on {player_url}'
         )
 
     def player_join_queue(self, player, channel):
@@ -962,7 +963,7 @@ class Command(BaseCommand):
 
         # check if player has enough MMR
         if player.ladder_mmr < channel.min_mmr:
-            response = f'`{player}`, your dick is too small. Grow a bigger one.'
+            response = f'`{player}`, your mmr is too low for the current queue, sorry!'
             return None, False, response
 
         queue = player.ladderqueue_set.filter(
@@ -978,7 +979,7 @@ class Command(BaseCommand):
 
             # check that player is not already in a full queue
             if queue.players.count() == 10:
-                response = f'`{player}`, you are under arrest dodging scum. Play the game.'
+                response = f'`{player}`, where you going? Play the game! :)'
                 return None, False, response
 
         # remove player from other queues
@@ -1186,7 +1187,7 @@ class Command(BaseCommand):
 
         if deleted > 0:
             await channel.send(
-                'Purge all heretics from the queue!\n' +
+                'Purged everyone from the queue!\n' +
                 '```\n' +
                 ' | '.join(p.name for p in afk_list) +
                 '\n```'
@@ -1278,10 +1279,10 @@ class Command(BaseCommand):
         await self.draft_mode_poll_show(message)
 
     async def elite_mmr_poll_show(self, message):
-        q_channel = QueueChannel.objects.get(name='Elite queue')
+        q_channel = QueueChannel.objects.get(name='high mmr queue')
 
         text = f'\n-------------------------------\n' + \
-               f'**ELITE QUEUE MMR**\n' + \
+               f'**HIGH MMR QUEUE MMR**\n' + \
                f'-------------------------------\n' + \
                f'Current MMR floor: **{q_channel.min_mmr}**\n\n' + \
                f'🦀 - 4000;\n' + \
@@ -1311,7 +1312,7 @@ class Command(BaseCommand):
         votes_5000 = discord.utils.get(message.reactions, emoji='💪').count
 
         # update settings
-        q_channel = QueueChannel.objects.get(name='Elite queue')
+        q_channel = QueueChannel.objects.get(name='high mmr queue')
         if votes_4500 < votes_4000 > votes_5000:
             q_channel.min_mmr = 4000
         elif votes_4000 < votes_4500 > votes_5000:
@@ -1361,7 +1362,6 @@ class Command(BaseCommand):
     async def queues_show(self):
         def queue_show(q):
             q_string = self.queue_str(q, show_min_mmr=False)
-
             if q.players.count() == 10:
                 auto_balance = LadderSettings.get_solo().draft_mode == LadderSettings.AUTO_BALANCE
                 if auto_balance:
@@ -1377,10 +1377,9 @@ class Command(BaseCommand):
         # show queues info
         for q_type in QueueChannel.objects.all():
             message = self.queue_messages[q_type.discord_msg]
-
             mmr_string = f'({q_type.min_mmr}+)' if q_type.min_mmr > 0 else ''
-            queues = LadderQueue.objects\
-                .filter(channel=q_type)\
+            queues = LadderQueue.objects \
+                .filter(channel=q_type) \
                 .filter(Q(active=True) |
                         Q(game_start_time__isnull=False) & Q(game_end_time__isnull=True))
 
@@ -1399,14 +1398,13 @@ class Command(BaseCommand):
             await message.edit(content=text)
 
             # remove reactions of players who are no longer in this queue
-            queue_players = QueuePlayer.objects\
+            queue_players = QueuePlayer.objects \
                 .filter(queue__channel=q_type, queue__active=True) \
                 .values_list('player__discord_id', flat=True)
 
             r = discord.utils.get(message.reactions, emoji='✅')
             if not r:
                 return  # no reactions setup yet
-
             async for user in r.users():
                 if not user.bot and (str(user.id) not in queue_players):
                     await r.remove(user)
@@ -1492,7 +1490,7 @@ class Command(BaseCommand):
         if any(x.queue__players__count == 10 for x in qs):
             self.bot.loop.create_task(
                 self.update_status_message(
-                    f'`{player}`, you are under arrest dodging scum. Play the game.\n'
+                    f'`{player}`, where you going? Play the game! :)\n'
                 )
             )
             return
